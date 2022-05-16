@@ -13,8 +13,11 @@ RegisterForm.propTypes = {
 
 function RegisterForm(props) {
     const schema = yup.object().shape({
-        title: yup.string().required('Moe ai day may de trong the kia')
+        fullName: yup.string().required('Moe ai day may de trong the kia')
             .min(5, 'Title too short'),
+        email: yup.string().required('please enter your email')
+            .email('PLease enter your valid email address')
+
     })
 
     const form = useForm({
