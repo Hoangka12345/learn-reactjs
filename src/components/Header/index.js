@@ -79,11 +79,10 @@ function Header(props) {
             <Dialog open={open} onClose={handleClose} disableEscapeKeyDown disableBackdropClick={handleBackdropClick}>
 
                 <DialogContent>
-                    <Register />
+                    <Register closeDialog={handleClose} />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={handleClose}>Register</Button>
                 </DialogActions>
             </Dialog>
         </Box>
