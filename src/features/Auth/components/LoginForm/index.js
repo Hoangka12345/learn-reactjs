@@ -9,30 +9,22 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import PasswordField from '../../../../components/form-controls/PasswordField';
 import LinearProgress from '@mui/material/LinearProgress';
 
-RegisterForm.propTypes = {
+LoginForm.propTypes = {
     onSubmit: PropTypes.func,
 };
 
-function RegisterForm(props) {
+function LoginForm(props) {
     const schema = yup.object().shape({
-        fullName: yup.string().required('Moe ai dạy mày để trống thế kia?')
-            .test('should has at least two words', 'Please enter at least two words', value => {
-                return value.split(' ').length >= 2
-            }),
-        email: yup.string().required('please enter your email')
+        identifier: yup.string().required('please enter your email')
             .email('PLease enter your valid email address'),
         password: yup.string().required('please enter your password')
             .min(6, 'Please enter at least 6 characters'),
-        confirmPassword: yup.string()
-            .oneOf([yup.ref('password')], 'your confirm password does not match'),
     })
 
     const form = useForm({
         defaultValues: {
-            fullName: '',
-            email: '',
+            identifier: '',
             password: '',
-            confirmPassword: '',
         },
         resolver: yupResolver(schema),
     })
@@ -52,19 +44,17 @@ function RegisterForm(props) {
                 <LockOutlinedIcon />
             </Avatar>
             <Typography variant="h5" component="h2" sx={{ textAlign: 'center', color: '#9c27b0' }}>
-                Sign up
+                Sign in
             </Typography>
 
             <form onSubmit={form.handleSubmit(handelSubmit)}>
-                <InputField name="fullName" label="Full name" form={form} />
-                <InputField name="email" label="Email" form={form} />
+                <InputField name="identifier" label="Email" form={form} />
                 <PasswordField name="password" label="Password" form={form} />
-                <PasswordField name="confirmPassword" label="Confirm password" form={form} />
 
-                <Button disabled={isSubmitting} fullWidth variant="contained" sx={{ mt: 2 }} type="submit">Register</Button>
+                <Button disabled={isSubmitting} fullWidth variant="contained" sx={{ mt: 2 }} type="submit">Login</Button>
             </form>
         </>
     );
 }
 
-export default RegisterForm;
+export default LoginForm;

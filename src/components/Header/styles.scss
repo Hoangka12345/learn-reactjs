@@ -1,7 +1,18 @@
 .header__link {
   text-decoration: none;
 
-  & > button {
+  &>button {
     color: #fff;
+  }
+}
+
+.dialog {
+  position: relative;
+
+  &__close {
+    position: absolute;
+    top: 0;
+    left: 520px;
+    cursor: pointer;
   }
 }

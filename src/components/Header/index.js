@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -6,16 +6,14 @@ import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import CodeIcon from '@mui/icons-material/Code';
-import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
+import CloseIcon from '@mui/icons-material/Close';
 
 import './styles.scss';
 import { Link, NavLink } from 'react-router-dom';
 import Register from '../../features/Auth/components/Register';
+import Login from '../../features/Auth/components/Login';
 
 Header.propTypes = {
 
@@ -29,7 +27,13 @@ Header.propTypes = {
 // }
 
 function Header(props) {
-    const [open, setOpen] = React.useState(false);
+    const Mode = {
+        Login: 'login',
+        Register: 'register',
+    }
+
+    const [open, setOpen] = useState(false);
+    const [mode, setMode] = useState(Mode.Register)
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -77,13 +81,33 @@ function Header(props) {
             </AppBar>
 
             <Dialog open={open} onClose={handleClose} disableEscapeKeyDown disableBackdropClick={handleBackdropClick}>
-
-                <DialogContent>
-                    <Register closeDialog={handleClose} />
+                <DialogContent sx={{ position: 'relative' }}>
+                    <IconButton onClick={handleClose} sx={{ position: 'absolute', top: '5px', right: '10px' }}>
+                        <CloseIcon />
+                    </IconButton>
+                    {mode == Mode.Register ? (
+                        <>
+                            <Register closeDialog={handleClose} />
+                            <Box textAlign='center'>
+                                <Button color='primary' onClick={() => setMode(Mode.Login)}>
+                                    Already have an account. Login hear
+                                </Button>
+                            </Box>
+                        </>
+                    )
+                        :
+                        (
+                            <>
+                                <Login closeDialog={handleClose} />
+                                <Box textAlign='center'>
+                                    <Button color='primary' onClick={() => setMode(Mode.Register)} >
+                                        Don't have an account. Register hear
+                                    </Button>
+                                </Box>
+                            </>
+                        )
+                    }
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
-                </DialogActions>
             </Dialog>
         </Box>
     );
