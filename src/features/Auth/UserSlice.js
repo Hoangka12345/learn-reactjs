@@ -1,4 +1,5 @@
 import UserApi from "../../api/UserApi";
+import StorageKeys from "../../constants/storage-keys";
 const { createSlice, createAsyncThunk } = require("@reduxjs/toolkit");
 
 export const register = createAsyncThunk(
@@ -7,8 +8,8 @@ export const register = createAsyncThunk(
         // call api to register
         const data = await UserApi.register(payload)
         //save data to local storage
-        localStorage.setItem('access_token', data.data.jwt)
-        localStorage.setItem('user', JSON.stringify(data.data.user))
+        localStorage.setItem(StorageKeys.TOKEN, data.data.jwt)
+        localStorage.setItem(StorageKeys.USER, JSON.stringify(data.data.user))
         return data.data.user
     }
 )
@@ -19,8 +20,8 @@ export const login = createAsyncThunk(
         // call api to register
         const data = await UserApi.login(payload)
         //save data to local storage
-        localStorage.setItem('access_token', data.data.jwt)
-        localStorage.setItem('user', JSON.stringify(data.data.user))
+        localStorage.setItem(StorageKeys.TOKEN, data.data.jwt)
+        localStorage.setItem(StorageKeys.USER, JSON.stringify(data.data.user))
         return data.data.user
     }
 )
@@ -28,10 +29,17 @@ export const login = createAsyncThunk(
 const UserSlice = createSlice({
     name: "user",
     initialState: {
-        current: {},
+        current: JSON.parse(localStorage.getItem(StorageKeys.USER)) || {},
         settings: {},
     },
-    reducers: {},
+    reducers: {
+        logout(state) {
+            localStorage.removeItem(StorageKeys.USER)
+            localStorage.removeItem(StorageKeys.TOKEN)
+
+            state.current = {}
+        }
+    },
     extraReducers: {
         [register.fulfilled]: (state, action) => {
             state.current = action.payload
@@ -43,5 +51,6 @@ const UserSlice = createSlice({
     },
 })
 
-const { reducer } = UserSlice
+const { actions, reducer } = UserSlice
+export const { logout } = actions
 export default reducer

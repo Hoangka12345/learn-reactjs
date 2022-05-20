@@ -9,11 +9,17 @@ import CodeIcon from '@mui/icons-material/Code';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import CloseIcon from '@mui/icons-material/Close';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 
 import './styles.scss';
 import { Link, NavLink } from 'react-router-dom';
 import Register from '../../features/Auth/components/Register';
 import Login from '../../features/Auth/components/Login';
+import { useDispatch, useSelector } from 'react-redux';
+import { Typography } from '@mui/material';
+import { logout } from '../../features/Auth/UserSlice';
 
 Header.propTypes = {
 
@@ -32,22 +38,34 @@ function Header(props) {
         Register: 'register',
     }
 
-    const [open, setOpen] = useState(false);
-    const [mode, setMode] = useState(Mode.Register)
+    const LoggedInUser = useSelector(state => state.user.current)
+    const isLogin = !!LoggedInUser.id
+    const [open, setOpen] = useState(false)
+    const [mode, setMode] = useState(Mode.Login)
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    const dispatch = useDispatch()
 
     const handleClickOpen = () => {
         setOpen(true);
-    };
+    }
 
     const handleClose = () => {
         setOpen(false);
-    };
+    }
 
-    const handleBackdropClick = (event) => {
-        //these fail to keep the modal open
-        event.stopPropagation();
-        return false;
-    };
+    const handleUserClick = (event) => {
+        setAnchorEl(event.currentTarget)
+    }
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    }
+
+    const handelLogoutClick = () => {
+        dispatch(logout())
+        handleMenuClose()
+    }
 
     return (
         <Box className="header" sx={{ flexGrow: 1 }}>
@@ -72,15 +90,31 @@ function Header(props) {
                         <NavLink to='/albums' className="header__link">
                             <Button >Album</Button>
                         </NavLink>
+                        <NavLink to='/products' className="header__link">
+                            <Button >Product</Button>
+                        </NavLink>
                     </Box>
                     <Box>
-                        <Button color="inherit">Login</Button>
-                        <Button color="inherit" onClick={handleClickOpen}>Register</Button>
+                        {isLogin ?
+                            <>
+                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                    <Typography>{LoggedInUser.fullName}</Typography>
+                                    <IconButton
+                                        color="inherit"
+                                        onClick={handleUserClick}
+                                    >
+                                        <AccountCircleIcon />
+                                    </IconButton>
+                                </Box>
+                            </>
+                            :
+                            <Button color="inherit" onClick={handleClickOpen}>Login</Button>
+                        }
                     </Box>
                 </Toolbar>
             </AppBar>
 
-            <Dialog open={open} onClose={handleClose} disableEscapeKeyDown disableBackdropClick={handleBackdropClick}>
+            <Dialog open={open} onClose={handleClose} disableEscapeKeyDown >
                 <DialogContent sx={{ position: 'relative' }}>
                     <IconButton onClick={handleClose} sx={{ position: 'absolute', top: '5px', right: '10px' }}>
                         <CloseIcon />
@@ -109,6 +143,14 @@ function Header(props) {
                     }
                 </DialogContent>
             </Dialog>
+            <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+            >
+                <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+                <MenuItem onClick={handelLogoutClick}>Logout</MenuItem>
+            </Menu>
         </Box>
     );
 }
