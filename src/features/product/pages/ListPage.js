@@ -5,6 +5,8 @@ import productApi from '../../../api/ProductApi';
 import ProductSkeletonList from '../components/ProductSkeletonList';
 import ProductList from '../components/ProductList';
 import ProductSort from '../components/ProductSort';
+import ProductFilters from '../components/ProductFilters';
+import FilterViewer from '../components/FilterViewer';
 
 ListPage.propTypes = {
 
@@ -56,17 +58,31 @@ function ListPage(props) {
         }))
     }
 
+    const handelChangeFilter = (newFilter) => {
+        setFilters(prev => ({
+            ...prev,
+            ...newFilter,
+        }))
+    }
+
+    const handelFilterViewer = (newFilter) => {
+        setFilters(newFilter)
+    }
+
     return (
         <Box>
-            <Container>
+            <Container Width='lg'>
                 <Grid container spacing={1}>
-                    <Grid item sx={{ with: '250px' }}>
-                        <Paper elevation={0}>left page</Paper>
+                    <Grid item sx={{ width: '250px' }}>
+                        <Paper elevation={0}>
+                            <ProductFilters filters={filters} onChange={handelChangeFilter} />
+                        </Paper>
                     </Grid>
 
                     <Grid item sx={{ flex: '1 1 0' }}>
                         <Paper elevation={0}>
                             <ProductSort currentSort={filters._sort} onChange={handelProductSort} />
+                            <FilterViewer filters={filters} onChange={handelFilterViewer} />
 
                             {loading ? <ProductSkeletonList /> : <ProductList data={productlist} />}
 
